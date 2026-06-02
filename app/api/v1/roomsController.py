@@ -20,7 +20,8 @@ class RoomsController(Controller):
         user_data = request.user
         if user_data.get("role") != "dm":
             raise PermissionDeniedException("Solo los Dungeon Masters pueden crear salas.")
-        return await create_new_room(data, str(user_data.get("sub")), room_repo)
+        creator_id = user_data.get("sub")
+        return await create_new_room(data, creator_id, room_repo)
 
     @get("/")
     async def list_rooms(
