@@ -1,6 +1,3 @@
-from dotenv import load_dotenv
-load_dotenv()
-
 from litestar import Litestar
 from litestar.di import Provide
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,5 +18,5 @@ app = Litestar(
     dependencies={
         "room_repo": Provide(provide_room_repo)
     },
-    debug=True
+    debug=False
 )
