@@ -2,10 +2,9 @@ from typing import Annotated
 from uuid import UUID
 from litestar import Controller, post, get, Request, params
 from litestar.exceptions import PermissionDeniedException
-from app.domain.structs import RoomCreate
 from app.services.room_service import create_new_room, get_all_rooms, get_room_by_id
 from app.repositories.room_repository import RoomRepository
-from app.schemas.room import RoomSchema
+from app.domain.structs import RoomResponse, RoomCreate
 
 class RoomsController(Controller):
     path = "/api/v1/rooms"
@@ -16,17 +15,21 @@ class RoomsController(Controller):
         data: RoomCreate,
         room_repo: RoomRepository,
         request: Request
-    ) -> RoomSchema:
+    ) -> RoomResponse:
         user_data = request.user
-        if user_data.get("role") != "dm":
+        
+        if not isinstance(user_data, dict) or user_data.get("role") != "dm":
             raise PermissionDeniedException("Solo los Dungeon Masters pueden crear salas.")
-        return await create_new_room(data, str(user_data.get("sub")), room_repo)
+        
+        creator_id = UUID(str(user_data.get("sub")))
+
+        return await create_new_room(data, creator_id, room_repo)
 
     @get("/")
     async def list_rooms(
         self,
         room_repo: RoomRepository,
-    ) -> list[RoomSchema]:
+    ) -> list[RoomResponse]:
         return await get_all_rooms(room_repo)
 
     @get("/{room_id:uuid}")
@@ -34,5 +37,5 @@ class RoomsController(Controller):
         self,
         room_id: Annotated[UUID, params.Parameter()],
         room_repo: RoomRepository,
-    ) -> RoomSchema:
+    ) -> RoomResponse:
         return await get_room_by_id(room_id, room_repo)

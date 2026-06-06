@@ -2,15 +2,14 @@ import pytest
 from uuid import uuid4
 from unittest.mock import AsyncMock
 from app.services.room_service import create_new_room, get_all_rooms, get_room_by_id
-from app.domain.structs import RoomCreate
 from app.models.room import RoomModel
-from app.schemas.room import RoomSchema
+from app.domain.structs import RoomCreate, RoomResponse 
 
 @pytest.mark.asyncio
 async def test_create_new_room_service():
     mock_repo = AsyncMock()
     data = RoomCreate(name="Sala de Prueba", description="Descripción", capacity=5)
-    creator_id = "dm-123"
+    creator_id = uuid4()
 
     fake_room = RoomModel()
     fake_room.id = uuid4()
@@ -24,7 +23,7 @@ async def test_create_new_room_service():
 
     result = await create_new_room(data, creator_id, mock_repo)
 
-    assert isinstance(result, RoomSchema)
+    assert isinstance(result, RoomResponse)
     assert result.name == "Sala de Prueba"
     assert result.creator_id == creator_id
     assert result.capacity == 5
@@ -39,7 +38,7 @@ async def test_get_all_rooms_service():
     fake_room.name = "Sala 1"
     fake_room.description = None
     fake_room.capacity = 5
-    fake_room.creator_id = "dm-1"
+    fake_room.creator_id = uuid4()
     fake_room.status = "active"
 
     mock_repo.list.return_value = [fake_room]
@@ -47,7 +46,7 @@ async def test_get_all_rooms_service():
     result = await get_all_rooms(mock_repo)
 
     assert len(result) == 1
-    assert isinstance(result[0], RoomSchema)
+    assert isinstance(result[0], RoomResponse)
     assert result[0].name == "Sala 1"
 
 @pytest.mark.asyncio
@@ -60,13 +59,13 @@ async def test_get_room_by_id_service():
     fake_room.name = "Sala VIP"
     fake_room.description = None
     fake_room.capacity = 5
-    fake_room.creator_id = "dm-1"
+    fake_room.creator_id = uuid4()
     fake_room.status = "active"
 
     mock_repo.get.return_value = fake_room
 
     result = await get_room_by_id(room_id, mock_repo)
 
-    assert isinstance(result, RoomSchema)
+    assert isinstance(result, RoomResponse)
     assert result.id == room_id
     assert result.name == "Sala VIP"
