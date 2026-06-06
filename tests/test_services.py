@@ -2,7 +2,6 @@ import pytest
 from uuid import uuid4
 from unittest.mock import AsyncMock
 from app.services.room_service import create_new_room, get_all_rooms, get_room_by_id
-from app.domain.structs import RoomCreate
 from app.models.room import RoomModel
 from app.domain.structs import RoomCreate, RoomResponse 
 
