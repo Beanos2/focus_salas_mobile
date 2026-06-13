@@ -11,3 +11,4 @@ class RoomModel(UUIDAuditBase):
     capacity: Mapped[int] = mapped_column(Integer, default=5)
     creator_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
     status: Mapped[str] = mapped_column(String, default="active")
+    invitation_code: Mapped[str] = mapped_column(String(8), nullable=True, unique=True)

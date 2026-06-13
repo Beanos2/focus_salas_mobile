@@ -16,5 +16,14 @@ class RoomResponse(msgspec.Struct):
     name: str
     description: str | None
     capacity: int
-    creator_id: UUID  
+    creator_id: UUID
     status: str
+    invitation_code: str | None = None
+    qr_code: str | None = None
+
+class JoinRoomRequest(msgspec.Struct):
+    invitation_code: str
+
+class MemberResponse(msgspec.Struct):
+    message: str
+    room_id: str | None = None

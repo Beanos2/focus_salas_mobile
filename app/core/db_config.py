@@ -9,7 +9,8 @@ DATABASE_URL = os.getenv(
 )
 
 db_config = SQLAlchemyAsyncConfig(
-    connection_string= DATABASE_URL
+    connection_string= DATABASE_URL,
+    create_all=True
 )
 
 db_plugin = SQLAlchemyPlugin(config=db_config)
