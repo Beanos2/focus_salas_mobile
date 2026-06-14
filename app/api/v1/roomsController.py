@@ -2,8 +2,7 @@ from typing import Annotated
 from uuid import UUID
 from litestar import Controller, post, get, delete, Request, params
 from litestar.exceptions import PermissionDeniedException
-from litestar.response import Response
-from app.services.room_service import create_new_room, get_all_rooms, get_room_by_id
+from app.services.room_service import create_new_room, get_all_rooms, get_room_by_id, end_room
 from app.services.room_member_service import (
     generate_invitation_code, generate_qr_base64,
     join_room, leave_room
@@ -48,6 +47,19 @@ class RoomsController(Controller):
         room_repo: RoomRepository,
     ) -> RoomResponse:
         return await get_room_by_id(room_id, room_repo)
+
+    @post("/{room_id:uuid}/end", status_code=200)
+    async def end_room(
+        self,
+        room_id: Annotated[UUID, params.Parameter()],
+        room_repo: RoomRepository,
+        request: Request
+    ) -> RoomResponse:
+        user_data = request.user
+        if not isinstance(user_data, dict) or user_data.get("role") != "dm":
+            raise PermissionDeniedException("Solo los Dungeon Masters pueden cerrar la sala.")
+        creator_id = UUID(str(user_data.get("sub")))
+        return await end_room(room_id, creator_id, room_repo)
 
     @post("/{room_id:uuid}/join", status_code=200)
     async def join_room(

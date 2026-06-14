@@ -31,7 +31,10 @@ async def join_room(
     if not room:
         raise NotFoundException("Sala no encontrada con ese código.")
 
-    room_id = room.id  # guardamos antes de que la sesión cierre
+    if room.status != "waiting":
+        raise ClientException("La sala no está disponible para unirse.")
+
+    room_id = room.id
 
     members_result = await member_repo.get_many()
     members = list(members_result)
@@ -44,7 +47,6 @@ async def join_room(
     await member_repo.add(member, auto_commit=True)
 
     return {"message": "Te uniste a la sala exitosamente", "room_id": str(room_id)}
-
 async def leave_room(
     room_id: UUID,
     user_id: UUID,
