@@ -18,9 +18,9 @@ services:
     build:
       context: .
     ports:
-      - "8004:8004"
+      - "8004:8080"
     environment:
-      - PORT=8004
+      - PORT=8080
       - DATABASE_URL=postgresql+asyncpg://user:rooms_password@rooms_db:5432/focus_rooms_db
       - SECRET_KEY=clave_super_secreta
     depends_on:
