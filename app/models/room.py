@@ -1,8 +1,11 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from advanced_alchemy.base import UUIDAuditBase
-from sqlalchemy import String, Integer, Uuid, DateTime, Float
+from sqlalchemy import String, Integer, Uuid, DateTime, Float, Time
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, time
+
+ 
+
 
 class RoomModel(UUIDAuditBase):
     __tablename__ = "rooms"
@@ -16,3 +19,5 @@ class RoomModel(UUIDAuditBase):
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     ended_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
     xp_multiplier: Mapped[float] = mapped_column(Float, default=1.3)
+    valid_from_time: Mapped[time | None] = mapped_column(Time, nullable=True)
+    valid_until_time: Mapped[time | None] = mapped_column(Time, nullable=True)

@@ -19,7 +19,9 @@ async def create_new_room(
         invitation_code=invitation_code,
         status="active",
         xp_multiplier=data.xp_multiplier,
-        started_at=datetime.now(timezone.utc)
+        started_at=datetime.now(timezone.utc),
+        valid_from_time=data.valid_from_time,
+        valid_until_time=data.valid_until_time
     )
     created = await room_repo.add(new_room, auto_commit=True)
     return _to_response(created)
@@ -68,5 +70,7 @@ def _to_response(r: RoomModel, qr_code: str | None = None) -> RoomResponse:
         invitation_code=r.invitation_code,
         qr_code=qr_code,
         started_at=r.started_at,
-        ended_at=r.ended_at
+        ended_at=r.ended_at,
+        valid_from_time=r.valid_from_time,
+        valid_until_time=r.valid_until_time
     )
